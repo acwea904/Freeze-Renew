@@ -285,17 +285,15 @@ test('FreezeHost 自动续期', async () => {
             console.log('⚠️ 未找到 renewal-status-console，尝试继续续期...');
         }
 
-        // ── 点击外链图标打开续期弹窗 ─────────────────────────
-        console.log('🔍 查找外链图标按钮...');
-        // 图标在 group-hover 下才可见，需先 hover 父元素使其显现
-        const externalLinkIcon = page.locator('i.fa-external-link-alt').first();
-        const parentEl = page.locator('i.fa-external-link-alt').first().locator('xpath=..');
-        await parentEl.waitFor({ state: 'visible', timeout: 10000 });
-        await parentEl.hover();
-        console.log('✅ 已 hover 父元素，等待图标显现...');
-        await page.waitForTimeout(1000);
-        await externalLinkIcon.click({ force: true });
-        console.log('✅ 已点击外链图标，等待弹窗...');
+        // ── 点击专属 ID 按钮打开续期弹窗 ─────────────────────────
+        console.log('🔍 查找续期信息触发按钮...');
+        const renewTriggerBtn = page.locator('#renew-link-trigger');
+        
+        // 等待按钮出现并点击
+        await renewTriggerBtn.waitFor({ state: 'visible', timeout: 10000 });
+        await renewTriggerBtn.click({ force: true });
+        
+        console.log('✅ 已点击续期按钮，等待弹窗加载...');
         await page.waitForTimeout(2000);
 
         // ── 检查续期弹窗按钮状态 ─────────────────────────────
