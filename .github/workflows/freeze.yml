@@ -3,6 +3,12 @@ on:
   schedule:
     - cron: '0 8 */10 * *'
   workflow_dispatch:
+
+# 赋予 GITHUB_TOKEN 删除运行记录的权限
+permissions:
+  actions: write
+  contents: read
+
 jobs:
   renew:
     name: 🔄 执行续期
@@ -40,9 +46,10 @@ jobs:
 
       - name: 🚀 运行续期脚本
         env:
-          DISCORD_ACCOUNT: ${{ secrets.DISCORD_ACCOUNT }}
-          TG_BOT:          ${{ secrets.TG_BOT }}
-          GOST_PROXY:      http://127.0.0.1:8080
+          # 支持多账号，格式：备注#邮箱,密码|备注2#邮箱2,密码2
+          DISCORD_ACCOUNTS: ${{ secrets.DISCORD_ACCOUNTS }}
+          TG_BOT:           ${{ secrets.TG_BOT }}
+          GOST_PROXY:       http://127.0.0.1:8080
         run: npx playwright test
 
       - name: 📸 上传失败截图
@@ -52,3 +59,13 @@ jobs:
           name: failure-screenshots
           path: test-results/
           retention-days: 7
+
+      - name: 🧹 清理旧的运行记录 (仅保留最新3次)
+        uses: Mattraks/delete-workflow-runs@v2
+        # 即使上面的脚本运行失败，也执行清理操作
+        if: always() 
+        with:
+          token: ${{ github.token }}
+          repository: ${{ github.repository }}
+          retain_days: 0
+          keep_minimum_runs: 3
