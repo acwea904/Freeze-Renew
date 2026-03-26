@@ -48,6 +48,7 @@ jobs:
         env:
           # 支持多账号，格式：备注#邮箱,密码|备注2#邮箱2,密码2
           DISCORD_ACCOUNTS: ${{ secrets.DISCORD_ACCOUNTS }}
+          DISCORD_ACCOUNT:  ${{ secrets.DISCORD_ACCOUNT }}
           TG_BOT:           ${{ secrets.TG_BOT }}
           GOST_PROXY:       http://127.0.0.1:8080
         run: npx playwright test
